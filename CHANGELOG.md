@@ -7,6 +7,10 @@
   `lerp(a, b, t)` for animating theme switches, and value equality
   (`==`/`hashCode`). Value equality makes `ChatThemeProvider` only notify on a
   real change. No breaking changes.
+* `ConversationsScreen` gained a `showAppBar` flag (default `true`) for
+  embedding the screen beneath a host-provided header without a duplicate bar.
+  Its Scaffold background now follows `ChatTheme.background` instead of being
+  hard-coded white.
 
 ## 0.0.6
 

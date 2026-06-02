@@ -13,10 +13,18 @@ import 'package:flutter/material.dart';
 /// This is the only screen the host app needs to navigate to.
 class ConversationsScreen extends StatefulWidget {
   /// Creates the conversations home screen with an optional app bar [title].
-  const ConversationsScreen({super.key, this.title = 'Chats'});
+  const ConversationsScreen({
+    super.key,
+    this.title = 'Chats',
+    this.showAppBar = true,
+  });
 
   /// Title shown in the app bar.
   final String title;
+
+  /// Whether to render the built-in app bar. Set to `false` when embedding the
+  /// screen beneath a host-provided header to avoid a duplicate bar.
+  final bool showAppBar;
 
   @override
   State<ConversationsScreen> createState() => _ConversationsScreenState();
@@ -132,11 +140,13 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
       theme: theme,
       child: Scaffold(
         backgroundColor: theme.background,
-        appBar: AppBar(
-          backgroundColor: theme.appBarColor,
-          foregroundColor: theme.appBarForeground,
-          title: Text(widget.title),
-        ),
+        appBar: widget.showAppBar
+            ? AppBar(
+                backgroundColor: theme.appBarColor,
+                foregroundColor: theme.appBarForeground,
+                title: Text(widget.title),
+              )
+            : null,
         floatingActionButton: FloatingActionButton(
           backgroundColor: theme.primary,
           onPressed: () => Navigator.of(context).push(
