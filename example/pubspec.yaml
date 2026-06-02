@@ -1,0 +1,23 @@
+name: chat_kit_example
+description: "Example host app for the chat_kit package."
+publish_to: "none"
+version: 1.0.0
+
+environment:
+  sdk: ^3.12.0
+
+dependencies:
+  chat_kit:
+    path: ../
+  firebase_auth: ^6.5.1
+  firebase_core: ^4.9.0
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  very_good_analysis: ^10.2.0
+
+flutter:
+  uses-material-design: true
