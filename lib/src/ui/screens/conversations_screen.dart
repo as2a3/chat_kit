@@ -166,6 +166,7 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
             final items = _controller.conversations;
             if (items.isEmpty) return const _EmptyView();
             return ListView.separated(
+              padding: const EdgeInsets.symmetric(vertical: 8),
               itemCount: items.length,
               separatorBuilder: (_, _) => const Divider(height: 1, indent: 84),
               itemBuilder: (context, i) {

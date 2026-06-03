@@ -11,6 +11,20 @@
   embedding the screen beneath a host-provided header without a duplicate bar.
   Its Scaffold background now follows `ChatTheme.background` instead of being
   hard-coded white.
+* `ChatConfig.androidNotificationIcon` (default `@mipmap/ic_launcher`) makes
+  the local-notification small icon configurable. Point it at your app's real
+  launcher icon (or a dedicated white notification drawable) when the default
+  isn't present in the release build — otherwise push setup throws
+  `invalid_icon`.
+* **Fix: presence & typing on non-default Realtime Database regions.**
+  `FirebaseDatabase.instance` derives its URL from the default Firebase
+  options, so when the RTDB lives outside `us-central1` (or isn't carried by
+  the generated options) it had a null URL and every `ref(...)` — presence,
+  typing, `typingFor`, `.info/connected` — silently no-op'd. New
+  `ChatConfig.databaseUrl` lets you supply the RTDB URL explicitly; when set,
+  the package builds the instance via `FirebaseDatabase.instanceFor(...)`.
+  Leave it null if your default options already carry the database URL. No
+  breaking changes.
 
 ## 0.0.6
 

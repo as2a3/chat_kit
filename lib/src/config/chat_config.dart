@@ -25,9 +25,11 @@ class ChatConfig {
     this.enablePresence = true,
     this.enableTypingIndicators = true,
     this.enablePushNotifications = true,
+    this.databaseUrl,
     this.onNotificationTap,
     this.navigatorKey,
     this.maxMediaBytes = 25 * 1024 * 1024,
+    this.androidNotificationIcon = '@mipmap/ic_launcher',
   }) : theme = theme ?? ChatTheme.whatsapp();
 
   /// Visual theme used across the chat UI.
@@ -45,6 +47,17 @@ class ChatConfig {
   /// Show and broadcast "typing…" indicators via the Realtime Database.
   final bool enableTypingIndicators;
 
+  /// Explicit Realtime Database URL, e.g.
+  /// `https://my-app-default-rtdb.europe-west1.firebasedatabase.app`.
+  ///
+  /// Required whenever your RTDB instance lives outside the default
+  /// `us-central1` region (or isn't present in your generated Firebase
+  /// options): in that case the default `FirebaseDatabase.instance` has no URL
+  /// and presence/typing silently do nothing. Find it in the Firebase console
+  /// under Realtime Database → Data. Leave null only if your default Firebase
+  /// options already carry the database URL.
+  final String? databaseUrl;
+
   /// Register for FCM push notifications and surface foreground messages.
   /// Requires deploying the bundled Cloud Function to actually send pushes.
   final bool enablePushNotifications;
@@ -59,4 +72,15 @@ class ChatConfig {
 
   /// Reject media uploads larger than this (bytes). Defaults to 25 MB.
   final int maxMediaBytes;
+
+  /// Android resource name for the local-notification small icon, passed to
+  /// `flutter_local_notifications`. Defaults to `@mipmap/ic_launcher`.
+  ///
+  /// The referenced resource must exist in the host app's release build. If
+  /// your launcher icon uses a non-default name (e.g. `flutter_launcher_icons`
+  /// generated `@mipmap/launcher_icon`), point this at it — otherwise the
+  /// default may be stripped by resource shrinking and notification setup will
+  /// throw `invalid_icon`. Ideally supply a white, transparent notification
+  /// icon (e.g. `@drawable/ic_notification`).
+  final String androidNotificationIcon;
 }

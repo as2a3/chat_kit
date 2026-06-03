@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
@@ -8,12 +9,26 @@ import 'package:firebase_storage/firebase_storage.dart';
 /// Assumes the host app has already called `Firebase.initializeApp()`.
 class FirebaseRefs {
   /// Creates the handles, defaulting each to its singleton instance.
+  ///
+  /// When [database] is omitted, the Realtime Database instance is resolved
+  /// from [databaseUrl] if given — necessary when the RTDB lives outside the
+  /// default region or isn't carried by the default Firebase options, where
+  /// `FirebaseDatabase.instance` would otherwise have a null URL and every
+  /// `ref(...)` would silently fail.
   FirebaseRefs({
     FirebaseFirestore? firestore,
     FirebaseDatabase? database,
     FirebaseStorage? storage,
+    String? databaseUrl,
   }) : firestore = firestore ?? FirebaseFirestore.instance,
-       database = database ?? FirebaseDatabase.instance,
+       database =
+           database ??
+           (databaseUrl != null
+               ? FirebaseDatabase.instanceFor(
+                   app: Firebase.app(),
+                   databaseURL: databaseUrl,
+                 )
+               : FirebaseDatabase.instance),
        storage = storage ?? FirebaseStorage.instance;
 
   /// Firestore instance backing chats and messages.

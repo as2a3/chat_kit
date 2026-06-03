@@ -1,6 +1,6 @@
 name: chat_kit
 description: "A drop-in, WhatsApp-style chat package for Flutter backed by Firebase (Firestore, Realtime Database, Storage). Call it after Firebase Auth login."
-version: 0.0.7
+version: 0.0.8
 homepage:
 
 environment:

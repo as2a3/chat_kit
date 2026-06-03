@@ -16,7 +16,7 @@ class ChatServices {
   /// Creates the repository bundle from [config], optionally reusing existing
   /// Firebase handles via [refs].
   ChatServices({required this.config, FirebaseRefs? refs})
-    : refs = refs ?? FirebaseRefs() {
+    : refs = refs ?? FirebaseRefs(databaseUrl: config.databaseUrl) {
     auth = AuthRepository(config: config);
     chats = ChatRepository(refs: this.refs);
     messages = MessageRepository(refs: this.refs);

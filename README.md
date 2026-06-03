@@ -38,7 +38,11 @@ no heavy state-management dependency.
 Add Firebase to your host app and enable:
 - **Authentication** (any provider your app uses)
 - **Cloud Firestore**
-- **Realtime Database**
+- **Realtime Database** — note its URL (Firebase console → Realtime Database →
+  Data). If your instance lives outside the default `us-central1` region, or
+  isn't carried by your generated Firebase options, pass it via
+  `ChatConfig.databaseUrl` (see below) — otherwise presence and typing
+  silently do nothing.
 - **Cloud Storage**
 
 The simplest path is [`flutterfire configure`](https://firebase.google.com/docs/flutter/setup).
@@ -60,6 +64,9 @@ ChatKit.configure(ChatConfig(
   // Wire these to YOUR user directory:
   resolveUser:  (uid) => myDirectory.user(uid),     // name/avatar for a uid
   fetchContacts: ()   => myDirectory.contacts(),     // who you can start chats with
+  // Set this if your RTDB is outside us-central1 (or absent from your
+  // Firebase options) — required for presence & typing to work:
+  databaseUrl: 'https://your-app-default-rtdb.europe-west1.firebasedatabase.app',
 ));
 
 await ChatKit.instance.startPresence();          // call once after login

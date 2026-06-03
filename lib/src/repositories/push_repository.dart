@@ -104,10 +104,12 @@ class PushRepository {
   }
 
   Future<void> _initLocalNotifications() async {
-    const android = AndroidInitializationSettings('@mipmap/ic_launcher');
+    final android = AndroidInitializationSettings(
+      config.androidNotificationIcon,
+    );
     const darwin = DarwinInitializationSettings();
     await _local.initialize(
-      settings: const InitializationSettings(android: android, iOS: darwin),
+      settings: InitializationSettings(android: android, iOS: darwin),
       onDidReceiveNotificationResponse: (response) {
         final chatId = response.payload;
         if (chatId != null && chatId.isNotEmpty) onOpenChat?.call(chatId);
@@ -130,11 +132,36 @@ class PushRepository {
   }
 
   Future<void> _registerToken(String uid) async {
-    // APNs must be ready before getToken() on iOS.
+    // On Apple platforms FCM can't mint a token until APNs has handed the app
+    // its device token, and that handshake completes asynchronously a moment
+    // after launch — so getToken() throws if called too early. Wait for the
+    // APNs token (getAPNSToken returns null, rather than throwing, while it's
+    // still pending) before asking FCM for its token.
+    if (defaultTargetPlatform == TargetPlatform.iOS ||
+        defaultTargetPlatform == TargetPlatform.macOS) {
+      final apnsToken = await _waitForApnsToken();
+      // APNs never arrived (simulator, missing entitlement, etc.) — skip rather
+      // than let getToken() throw and abort the rest of push setup.
+      if (apnsToken == null) return;
+    }
+
     final token = await _messaging.getToken();
     if (token == null) return;
     _token = token;
     await _saveToken(uid, token);
+  }
+
+  /// Polls for the APNs device token, which arrives asynchronously shortly
+  /// after the app registers for remote notifications. Returns null if it
+  /// hasn't appeared within a few seconds (e.g. on the iOS simulator, which
+  /// can't receive one).
+  Future<String?> _waitForApnsToken() async {
+    for (var attempt = 0; attempt < 10; attempt++) {
+      final apns = await _messaging.getAPNSToken();
+      if (apns != null) return apns;
+      await Future<void>.delayed(const Duration(milliseconds: 500));
+    }
+    return null;
   }
 
   Future<void> _saveToken(String uid, String token) async {
