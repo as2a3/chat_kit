@@ -1,4 +1,5 @@
 import 'package:chat_kit/src/chat_kit_base.dart';
+import 'package:chat_kit/src/models/chat_user.dart';
 import 'package:chat_kit/src/models/conversation.dart';
 import 'package:chat_kit/src/ui/theme/chat_theme.dart';
 import 'package:chat_kit/src/ui/widgets/avatar.dart';
@@ -132,8 +133,35 @@ class _InfoBody extends StatelessWidget {
     String me,
     bool iAmAdmin,
   ) {
+    // Resolve the member from the live user directory when available, falling
+    // back to the cached participantInfo. The cache is kept fresh by a backend
+    // fan-out, but resolving here also covers the brief window before that
+    // fan-out lands and chats created before it was deployed.
+    final cached = convo.participantInfo[uid];
+    final resolve = ChatKit.instance.config.resolveUser;
+    if (resolve == null) {
+      return _memberTileFor(context, uid, me, iAmAdmin, cached);
+    }
+    return FutureBuilder<ChatUser?>(
+      future: resolve(uid),
+      builder: (context, snapshot) => _memberTileFor(
+        context,
+        uid,
+        me,
+        iAmAdmin,
+        snapshot.data ?? cached,
+      ),
+    );
+  }
+
+  Widget _memberTileFor(
+    BuildContext context,
+    String uid,
+    String me,
+    bool iAmAdmin,
+    ChatUser? user,
+  ) {
     final services = ChatKit.instance.services;
-    final user = convo.participantInfo[uid];
     final isThisAdmin = convo.isAdmin(uid);
     final isMe = uid == me;
 
