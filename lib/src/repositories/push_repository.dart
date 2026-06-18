@@ -26,18 +26,14 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 ///
 /// Sending the actual push is the job of the bundled Cloud Function (see
 /// `functions/`); this class only handles the device side.
-// ignore: unreachable_from_main  // used by host app via the package facade
 class PushRepository {
   /// Creates a [PushRepository] from the given Firebase [refs] and [config].
-  // ignore: unreachable_from_main  // used by host app via the package facade
   PushRepository({required this.refs, required this.config});
 
   /// Typed Firebase references used to store device tokens.
-  // ignore: unreachable_from_main  // used by host app via the package facade
   final FirebaseRefs refs;
 
   /// The chat configuration (notification-tap handling, etc.).
-  // ignore: unreachable_from_main  // used by host app via the package facade
   final ChatConfig config;
 
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
@@ -55,13 +51,11 @@ class PushRepository {
 
   /// Chat id currently open on screen; foreground notifications for it are
   /// suppressed. Set by [ChatKit.setActiveChat].
-  // ignore: unreachable_from_main  // set by host app via the package facade
   String? activeChatId;
 
   /// Called when a notification (foreground tap or cold/background open) should
   /// open a chat. Defaults to [ChatConfig.onNotificationTap]; the facade may
   /// override it to drive [ChatConfig.navigatorKey].
-  // ignore: unreachable_from_main  // set by host app via the package facade
   void Function(String chatId)? onOpenChat;
 
   bool _initialized = false;
@@ -69,7 +63,6 @@ class PushRepository {
   /// Requests permission, registers this device's token for [uid], wires up
   /// foreground/tap listeners and the local-notification channel. Safe to call
   /// once per signed-in session.
-  // ignore: unreachable_from_main  // called by host app via the package facade
   Future<void> initialize(String uid) async {
     if (_initialized) return;
     _initialized = true;
@@ -207,7 +200,6 @@ class PushRepository {
   }
 
   /// Removes this device's token (call on sign-out) and tears down listeners.
-  // ignore: unreachable_from_main  // called by host app via the package facade
   Future<void> dispose() async {
     final uid = _currentUid;
     final token = _token;
